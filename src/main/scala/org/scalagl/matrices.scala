@@ -1,6 +1,4 @@
-package org.brijest.storm
-package engine
-package gui.iso.scalagl
+package org.scalagl
 
 
 
