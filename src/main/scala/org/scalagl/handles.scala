@@ -200,11 +200,21 @@ final class FrameBuffer extends Handle[FrameBuffer] {
   def index = fbindex
 
   private[scalagl] object binding {
-    def attachTexture2D(target: Int, attachment: Int, t: Texture, level: Int)(implicit gl: GL2): Setup[Null] = new Setup[Null] {
-      def foreach[U](f: Null => U) {
-        gl.glFramebufferTexture2D(target, attachment, t.target, t.index, level)
-        try f(null)
+    def attachTexture2D(attachment: Int, t: Texture, level: Int)(implicit gl: GL2) = new Setup[Unit] {
+      def foreach[U](f: Unit => U) {
+        gl.glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, t.target, t.index, level)
+        try f(())
         finally {
+          // detach?
+        }
+      }
+    }
+    def attachRenderbuffer(target: Int, attachment: Int, rb: RenderBuffer)(implicit gl: GL2) = new Setup[Unit] {
+      def foreach[U](f: Unit => U) {
+        gl.glFramebufferRenderbuffer(target, attachment, GL_RENDERBUFFER, rb.index)
+        try f(())
+        finally {
+          // detach?
         }
       }
     }
@@ -226,6 +236,32 @@ final class FrameBuffer extends Handle[FrameBuffer] {
 
 }
 
+
+final class RenderBuffer extends Handle[RenderBuffer] {
+
+  private[scalagl] var rbindex = -1
+  private val result = new Array[Int](1)
+
+  def index = rbindex
+
+  def acquire()(implicit gl: GL2) {
+    release()
+    gl.glGenRenderbuffers(1, result, 0)
+    rbindex = result(0)
+  }
+
+  def allocateStorage(format: Int, wdt: Int, hgt: Int)(implicit gl: GL2) {
+    gl.glRenderbufferStorage(GL_RENDERBUFFER, format, wdt, hgt)
+  }
+
+  def release()(implicit gl: GL2) {
+    if (rbindex != -1) {
+      result(0) = rbindex
+      gl.glDeleteRenderbuffers(1, result, 0)
+    }
+  }
+
+}
 
 
 
