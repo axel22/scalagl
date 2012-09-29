@@ -209,7 +209,7 @@ final class FrameBuffer extends Handle[FrameBuffer] {
         }
       }
     }
-    def attachRenderbuffer(target: Int, attachment: Int, rb: RenderBuffer)(implicit gl: GL2) = new Setup[Unit] {
+    def attachRenderBuffer(target: Int, attachment: Int, rb: RenderBuffer)(implicit gl: GL2) = new Setup[Unit] {
       def foreach[U](f: Unit => U) {
         gl.glFramebufferRenderbuffer(target, attachment, GL_RENDERBUFFER, rb.index)
         try f(())
