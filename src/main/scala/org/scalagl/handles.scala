@@ -251,7 +251,9 @@ final class RenderBuffer extends Handle[RenderBuffer] {
   }
 
   def allocateStorage(format: Int, wdt: Int, hgt: Int)(implicit gl: GL2) {
-    gl.glRenderbufferStorage(GL_RENDERBUFFER, format, wdt, hgt)
+    for (_ <- using.renderbuffer(this)) {
+      gl.glRenderbufferStorage(GL_RENDERBUFFER, format, wdt, hgt)
+    }
   }
 
   def release()(implicit gl: GL2) {
