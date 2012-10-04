@@ -70,6 +70,7 @@ final class ShaderProgram private[scalagl] (nm: String) extends Handle[ShaderPro
   object uniform extends Dynamic {
     trait Var {
       def :=(v: Int)
+      def :=(x: Float)
       def :=(x: Float, y: Float, z: Float)
       def :=(t: (Float, Float, Float))
     }
@@ -81,6 +82,7 @@ final class ShaderProgram private[scalagl] (nm: String) extends Handle[ShaderPro
         loc
       }
       def :=(v: Int) = gl.glUniform1i(location, v)
+      def :=(v: Float) = gl.glUniform1f(location, v)
       def :=(x: Float, y: Float, z: Float): Unit = gl.glUniform3f(location, x, y, z)
       def :=(t: (Float, Float, Float)): Unit = :=(t._1, t._2, t._3)
     }
