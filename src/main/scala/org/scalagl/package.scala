@@ -179,6 +179,17 @@ package object scalagl {
       }
     }
 
+    def renderbuffer(rb: RenderBuffer)(implicit gl: GL2): Setup[Unit] = new Setup[Unit] {
+      import gl._
+      def foreach[U](f: Unit => U) {
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, result, 0)
+        val oldbinding = result(0)
+        glBindRenderbuffer(GL_RENDERBUFFER, rb.index)
+        try f(())
+        finally glBindFramebuffer(GL_RENDERBUFFER, oldbinding)
+      }
+    }
+
     def matrix[T](ms: Matrix*)(implicit gl: GL2): Setup[Null] = new Setup[Null] {
       import gl._
       def foreach[U](f: Null => U) {
